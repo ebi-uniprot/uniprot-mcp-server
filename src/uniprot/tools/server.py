@@ -35,6 +35,7 @@ def search_uniprot(function_query: Annotated[Optional[str], Field(description="c
     params['query'] = function_query
     params['size'] = size
     params['format'] = 'json'
+    params['fields'] = 'accession,protein_name,gene_oln,organism_name,cc_function,ec,cc_catalytic_activity'
     try:
         response = requests.get(base_url, params=params)
         response.raise_for_status()
