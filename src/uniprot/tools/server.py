@@ -12,12 +12,16 @@ This is main entry point for UniProt MCP server
 """
 mcp = FastMCP("UniProt MCP Server")
 
+uniprot_search_url = 'https://rest.uniprot.org/uniprotkb/search'
+
+
 @mcp.tool(
     name="search_uniprot",
     description="Search the UniProt database using the REST API with mandatory filtering criteria",
     tags={"search"}
 )
-def search_uniprot(function_query: Annotated[Optional[str], Field(description="concise function in the user query", examples=["kinase"])],
+def search_uniprot(function_query: Annotated[Optional[str], Field(description="concise function in the user query",
+                                                                  examples=["kinase"])],
                    organism_id: Annotated[Optional[int],
                                 Field(default=None,
                                       description="taxonomy id of organism/taxonomy to filter queries on",
@@ -45,7 +49,6 @@ def search_uniprot(function_query: Annotated[Optional[str], Field(description="c
                                                      " UniProtKB entries")]
                    ):
 
-    base_url = 'https://rest.uniprot.org/uniprotkb/search'
     params = {'query': function_query}
 
     if organism_id is not None:
@@ -67,11 +70,85 @@ def search_uniprot(function_query: Annotated[Optional[str], Field(description="c
     params['format'] = 'json'
     params['fields'] = 'accession,ec,organism_name,gene_names,protein_name,cc_function,cc_catalytic_activity'
     try:
-        response = requests.get(base_url, params=params)
+        response = requests.get(uniprot_search_url, params=params)
         response.raise_for_status()
         return {"status": "ok", "body": response.json()}
     except requests.RequestException as e:
         return {"status": "error", "message": str(e)}
+
+
+@mcp.tool(
+    name="orthology_query",
+    description="find orthology of the given uniprotkb accession",
+    tags={"orthologs"}
+)
+def orthology(accession: Annotated[Optional[str],
+                                   Field(default=None, description="UniProt kb accession which uniquely identifies"
+                                                                   " a uniprotKB record")]):
+    url = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        entry = response.json()
+        agr_xref = None
+        for xref in entry['uniProtKBCrossReferences']:
+            if xref['database'] == 'AGR':
+                agr_xref = xref['id']
+                break
+
+        if agr_xref is not None:
+            limit = 10
+            stringency_level = "stringent"  # could be strict, moderate, no filter
+            alliance_url = f"https://www.alliancegenome.org/api/gene/{agr_xref}/orthologs"
+            params = {
+                "filter.stringency": stringency_level,
+                "limit": limit
+            }
+            try:
+                alliance_response = requests.get(alliance_url, params)
+                alliance_response.raise_for_status()
+                if alliance_response.status_code == 200:
+                    alliance_response_json = alliance_response.json()
+                    gene_taxa = []
+                    for item in alliance_response_json.get("results", []):
+                        object_gene = item["geneToGeneOrthologyGenerated"]["objectGene"]
+                        gene_name = object_gene["geneSymbol"]["displayText"]
+                        taxon_id = object_gene["taxon"]["curie"].split(":")[1]
+                        gene_taxa.append((gene_name, taxon_id))
+
+                    query_parts = [f"(gene:{gene} AND taxonomy_id:{tax_id})" for gene, tax_id in gene_taxa]
+                    uniprot_query = " OR ".join(query_parts)
+                    search_params = {
+                        "query": uniprot_query,
+                        "format": "json",
+                        "fields": "accession,ec,organism_name,gene_names,protein_name,cc_function,cc_catalytic_activity"
+                    }
+                    try:
+                        search_response = requests.get(uniprot_search_url, search_params)
+                        if search_response.status_code == 200:
+                            search_response.raise_for_status()
+                            return {"status": "ok", "body": search_response.json()}
+                        else:
+                            search_error_message = (f"Error {search_response.status_code}: Unable to search for"
+                                                    f" query:{query_parts}")
+                            print(search_error_message)
+                            return {"status": "error", "message": search_error_message}
+                    except requests.RequestException as e:
+                        return {"status": "error", "message": str(e)}
+                else:
+                    alliance_error_message = f"Error {response.status_code}: Unable to fetch orthologs for {accession}"
+                    print(alliance_error_message)
+                    return {"status": "error", "message": alliance_error_message}
+            except requests.RequestException as e:
+                return {"status": "error", "message": str(e)}
+        else:
+            agr_error_message = f"no AGR xref found for {accession}"
+            print(agr_error_message)
+            return {"status": "error", "message": agr_error_message}
+    else:
+        error_message = f"Error {response.status_code}: Unable to fetch entry for {accession}"
+        print(error_message)
+        return {"status": "error", "message": error_message}
 
 
 @mcp.resource(uri="resource://enzymedat",
