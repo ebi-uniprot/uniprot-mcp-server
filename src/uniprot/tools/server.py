@@ -263,7 +263,8 @@ def get_uniprot_entry(accession: Annotated[Optional[str],
     params = {
         "offset": 0,
         "size": 100,
-        "accession": ",".join(accessions)
+        "accession": ",".join(accessions),
+        "format": "json"
     }
     
     try:
