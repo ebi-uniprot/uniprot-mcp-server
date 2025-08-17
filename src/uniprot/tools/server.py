@@ -66,7 +66,7 @@ def search_uniprot(function_query: Annotated[Optional[str],
     if gene_exact:
         query_parts.append(f"gene_exact={gene_exact}")
     
-    if reviewed is not None:
+    if reviewed is not None: # False is valid value for reviewed
         query_parts.append(f"reviewed={reviewed}")
     
     # If no query parts are provided, return an error
@@ -263,8 +263,7 @@ def get_uniprot_entry(accession: Annotated[Optional[str],
     params = {
         "offset": 0,
         "size": 100,
-        "accession": ",".join(accessions),
-        "format": "json"
+        "accession": ",".join(accessions)
     }
     
     try:
