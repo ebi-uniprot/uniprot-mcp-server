@@ -47,16 +47,40 @@ Access enzyme data from a local database:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/uniprot_mcp.git
-   cd uniprot_mcp
+   git clone https://gitlab.ebi.ac.uk/uniprot/aa/llm/uniprot-mcp-server.git
+   cd uniprot-mcp-server
+   ```
+   
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
    ```
 
-2. Install dependencies:
+3. Install dependencies:
    ```bash
    pip install fastmcp pydantic requests
    ```
+4. **Update your Claude configuration file** (e.g. `claude.config.json`) to include the following MCP server entry:
 
-3. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
+```json
+{
+  "mcpServers": {
+    "uniprot-mcp": {
+      "command": "<path-to-project>/venv/bin/python",
+      "args": [
+        "<path-to-project>/src/uniprot/tools/server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "<path-to-project>/src"
+      }
+    }
+  }
+}
+```
+
+
+5. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
 
 ## Usage
 
@@ -66,6 +90,14 @@ Run the server using:
 
 ```bash
 python -m src.uniprot.tools.server
+```
+
+### Starting the MCP Inspector
+
+Run the MCP Inspector using:
+
+```bash
+npx @modelcontextprotocol/inspector
 ```
 
 ## Architecture
