@@ -1,7 +1,7 @@
 import csv
 from typing import Annotated, Optional
 
-from fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP
 from pydantic import Field
 import requests
 import importlib.resources
@@ -18,8 +18,7 @@ uniprot_search_url = 'https://rest.uniprot.org/uniprotkb/search'
 
 @mcp.tool(
     name="search_uniprot",
-    description="Search the UniProt database using the REST API with optional filtering criteria. Can search by function, gene, organism, or any combination.",
-    tags={"search"}
+    description="Search the UniProt database using the REST API with optional filtering criteria. Can search by function, gene, organism, or any combination."
 )
 def search_uniprot(function_query: Annotated[Optional[str], 
                    Field(default=None,
@@ -98,8 +97,7 @@ def __fetch_agr_xref(entry):
 
 @mcp.tool(
     name="orthology_query",
-    description="find orthologs of the given uniprotkb accession",
-    tags={"orthologs"}
+    description="find orthologs of the given uniprotkb accession"
 )
 def orthology(accession: Annotated[Optional[str],
 Field(default=None, description="UniProt kb accession which uniquely identifies"
@@ -165,8 +163,7 @@ Field(default=None, description="UniProt kb accession which uniquely identifies"
 
 @mcp.tool(
     name="paralogy_query",
-    description="find paralogs of the given uniprotkb accession",
-    tags={"paralogs"}
+    description="find paralogs of the given uniprotkb accession"
 )
 def paralogy(accession: Annotated[Optional[str],
                     Field(default=None, description="UniProt kb accession which uniquely identifies"
@@ -230,7 +227,7 @@ def paralogy(accession: Annotated[Optional[str],
         return {"status": "error", "message": error_message}
 
 
-@mcp.prompt
+@mcp.prompt()
 def summary() -> str:
     return (f"You will search uniprot with provided fields and then replace ec numbers with description"
             f" provided in enzyme dat."
@@ -242,8 +239,7 @@ def summary() -> str:
 @mcp.tool(
     name="fetch_uniprot_entry_by_accession",
     description="this will retrieve uniprot entry by accession, it will not being used for search"
-                " based on other parameters",
-    tags={"fetch", "get"}
+                " based on other parameters"
 )
 def get_uniprot_entry(accession: Annotated[Optional[str],
                     Field(default=None,
@@ -258,12 +254,10 @@ def get_uniprot_entry(accession: Annotated[Optional[str],
     if not accessions:
         return {"status": "error", "message": "No valid accessions provided"}
     
-    # Use EBI Proteins API which supports comma-separated accessions
-    url = "https://www.ebi.ac.uk/proteins/api/proteins"
+    # Use accessions endpoint which supports comma-separated accessions
+    url = "https://rest.uniprot.org/uniprotkb/accessions"
     params = {
-        "offset": 0,
-        "size": 100,
-        "accession": ",".join(accessions)
+        "accessions": ",".join(accessions)
     }
     
     try:
