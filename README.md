@@ -84,6 +84,8 @@ Access enzyme data from a local database:
 
 ## Usage
 
+#### Note — Always activate the virtual environment before running the server (and the inspector, if needed). See the instructions above on how to activate the virtual environment.
+
 ### Starting the Server
 
 Run the server using:

@@ -5,13 +5,18 @@ from mcp.server.fastmcp import FastMCP
 from pydantic import Field
 import requests
 import importlib.resources
+import os
 
 """
 Author: Vishal Joshi
 Date: 2025-06-25
 This is main entry point for UniProt MCP server
 """
-mcp = FastMCP("UniProt MCP Server")
+
+HOST = os.getenv("APP_HOST", "0.0.0.0")
+PORT = int(os.getenv("APP_PORT", 8000))
+
+mcp = FastMCP("UniProt MCP Server", host=HOST, port=PORT)
 
 uniprot_search_url = 'https://rest.uniprot.org/uniprotkb/search'
 
@@ -298,4 +303,4 @@ def enzyme_dat():
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="streamable-http")
