@@ -2,6 +2,7 @@
 
 stages:
   - build
+  - deploy
 
 variables:
   # Docker image name
@@ -21,9 +22,31 @@ docker-build:
     - docker push $IMAGE_NAME:$CI_COMMIT_SHA
   rules:
     # Run on main branch
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: '$CI_COMMIT_REF_NAME == "main"'
       when: on_success
     # Allow manual triggers for any branch
     - when: manual
   tags:
     - docker
+
+k8s-deploy:
+  stage: deploy
+  needs:
+    - job: docker-build
+      artifacts: true
+  trigger:
+    project: uniprot/deployment/unp.ci.api.k8s
+    branch: main
+  variables:
+    CI_PIPELINE_TASKS: 'upgrade'
+    MCP_TAG: 'latest'
+    DC: 'DEV'
+    K8S_ENV: 'dev'
+    ARTIFACT: 'uniprot-mcp'
+  when: on_success
+  rules:
+    # Run automatically on main branch
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+      when: on_success
+    # Allow manual trigger on any branch
+    - when: manual
