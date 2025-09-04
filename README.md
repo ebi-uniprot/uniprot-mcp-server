@@ -50,7 +50,7 @@ Access enzyme data from a local database:
    git clone https://gitlab.ebi.ac.uk/uniprot/aa/llm/uniprot-mcp-server.git
    cd uniprot-mcp-server
    ```
-
+   
 2. Create and activate a virtual environment:
    ```bash
    python -m venv venv
@@ -101,41 +101,6 @@ Run the MCP Inspector using:
 ```bash
 npx @modelcontextprotocol/inspector
 ```
-
-### Using Docker
-
-You can also run the server using Docker:
-
-```bash
-docker pull registry.gitlab.com/[your-group]/uniprot-mcp-server:latest
-docker run -p 8000:8000 registry.gitlab.com/[your-group]/uniprot-mcp-server:latest
-```
-
-Replace `[your-group]` with your GitLab group path.
-
-## CI/CD Pipeline
-
-This repository includes a GitLab CI/CD pipeline that automatically builds and pushes Docker images.
-
-### Pipeline Behavior
-
-- The pipeline builds and pushes the Docker image in two scenarios:
-  1. When changes are pushed to the `main` branch
-  2. When manually triggered from the GitLab CI/CD interface
-
-- Each build creates two Docker image tags:
-  1. `latest` - Always points to the most recent successful build
-  2. `[commit-sha]` - A unique tag based on the commit SHA for versioning and rollback
-
-### Manually Triggering a Build
-
-To manually trigger a build:
-
-1. Go to your GitLab repository
-2. Navigate to CI/CD > Pipelines
-3. Click "Run pipeline"
-4. Select the branch you want to build
-5. Click "Run pipeline"
 
 ## Architecture
 
