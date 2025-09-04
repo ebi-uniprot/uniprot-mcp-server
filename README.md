@@ -115,17 +115,25 @@ Replace `[your-group]` with your GitLab group path.
 
 ## CI/CD Pipeline
 
-This repository includes a GitLab CI/CD pipeline that automatically builds and pushes Docker images.
+This repository includes a GitLab CI/CD pipeline that automatically builds, pushes Docker images, and can trigger Kubernetes deployments.
 
 ### Pipeline Behavior
 
-- The pipeline builds and pushes the Docker image in two scenarios:
-  1. When changes are pushed to the `main` branch
-  2. When manually triggered from the GitLab CI/CD interface
+The pipeline consists of two stages: `build` and `deploy`.
 
-- Each build creates two Docker image tags:
-  1. `latest` - Always points to the most recent successful build
-  2. `[commit-sha]` - A unique tag based on the commit SHA for versioning and rollback
+#### Build Stage (`docker-build`)
+
+- Builds a Docker image and pushes it to the GitLab registry.
+- Runs automatically on the `main` branch or can be triggered manually on any branch.
+- Creates two Docker image tags:
+    - `latest` – always points to the most recent successful build
+    - `[commit-sha]` – unique tag based on the commit SHA for versioning and rollback
+
+#### Deploy Stage (`k8s-deploy`)
+
+- Triggers a Kubernetes deployment(uniprot/deployment/unp.ci.api.k8s) in the `dev` environment using the `latest` Docker image.
+- Runs automatically after a successful build on the `main` branch or can be triggered manually on any branch.
+- Uses variables like `CI_PIPELINE_TASKS`, `MCP_TAG`, `DC`, `K8S_ENV`, and `ARTIFACT` for deployment configuration.
 
 ### Manually Triggering a Build
 
