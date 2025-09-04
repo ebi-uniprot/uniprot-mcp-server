@@ -1,0 +1,52 @@
+# GitLab CI/CD configuration for building and pushing Docker images
+
+stages:
+  - build
+  - deploy
+
+variables:
+  # Docker image name
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+
+# Build and push Docker image
+docker-build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker push $IMAGE_NAME:latest
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+  rules:
+    # Run on main branch
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+      when: on_success
+    # Allow manual triggers for any branch
+    - when: manual
+  tags:
+    - docker
+
+k8s-deploy:
+  stage: deploy
+  needs:
+    - job: docker-build
+      artifacts: true
+  trigger:
+    project: uniprot/deployment/unp.ci.api.k8s
+    branch: main
+  variables:
+    CI_PIPELINE_TASKS: 'upgrade'
+    MCP_TAG: 'latest'
+    DC: 'DEV'
+    K8S_ENV: 'dev'
+    ARTIFACT: 'uniprot-mcp'
+  when: on_success
+  rules:
+    # Run automatically on main branch
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+      when: on_success
+    # Allow manual trigger on any branch
+    - when: manual
