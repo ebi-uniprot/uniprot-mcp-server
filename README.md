@@ -14,6 +14,7 @@ The server leverages the UniProt REST API and Alliance Genome API to provide com
 ## Tech Stack
 
 - **Python**: Core programming language
+- **uv**: Package manager
 - **FastMCP**: Framework for building Model Context Protocol servers
 - **Pydantic**: Data validation and settings management
 - **Requests**: HTTP library for API interactions
@@ -51,17 +52,12 @@ Access enzyme data from a local database:
    cd uniprot-mcp-server
    ```
 
-2. Create and activate a virtual environment:
+2. Install dependencies:
    ```bash
-   python -m venv venv
-   source venv/bin/activate
+   uv pip install -r pyproject.toml
    ```
 
-3. Install dependencies:
-   ```bash
-   pip install fastmcp pydantic requests
-   ```
-4. **Update your Claude configuration file** (e.g. `claude.config.json`) to include the following MCP server entry:
+3. **Update your Claude configuration file** (e.g. `claude.config.json`) to include the following MCP server entry:
 
    ```json
     {
@@ -80,18 +76,16 @@ Access enzyme data from a local database:
     ```
 
 
-5. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
+4. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
 
 ## Usage
-
-#### Note — Always activate the virtual environment before running the server (and the inspector, if needed). See the instructions above on how to activate the virtual environment.
 
 ### Starting the Server
 
 Run the server using:
 
 ```bash
-python -m src.uniprot.tools.server
+uv run -m src.uniprot.tools.server
 ```
 
 ### Starting the MCP Inspector
