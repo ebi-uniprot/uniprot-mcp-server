@@ -57,7 +57,12 @@ Access enzyme data from a local database:
    uv pip install -r pyproject.toml
    ```
 
-3. **Update your Claude configuration file** (e.g. `claude.config.json`) to include the following MCP server entry:
+3. Run tests:
+   ```bash
+   pytest
+   ```
+   
+4. **Update your Claude configuration file** (e.g. `claude.config.json`) to include the following MCP server entry:
 
    ```json
     {
@@ -75,8 +80,7 @@ Access enzyme data from a local database:
     }
     ```
 
-
-4. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
+5. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
 
 ## Usage
 
