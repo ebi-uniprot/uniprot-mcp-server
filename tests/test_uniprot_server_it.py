@@ -27,6 +27,22 @@ def test_search_uniprot_integration():
     assert "comments" in first_result
 
 @pytest.mark.integration
+def test_invalid_search_uniprot_integration_gives_empty_results():
+    result = search_uniprot(
+        function_query="invalid",
+        organism_id=9999999,
+        size=1,
+        gene_name=None,
+        gene_exact=None,
+        reviewed=True
+    )
+    assert result["status"] == "ok"
+    body = result.get("body")
+    assert body is not None
+    assert "results" in body
+    assert len(body["results"]) == 0
+
+@pytest.mark.integration
 def test_get_uniprot_entry_integration():
     """Integration test for fetching a UniProt entry by accession"""
     result = get_uniprot_entry("P31749")  # AKT1 Human
@@ -37,15 +53,33 @@ def test_get_uniprot_entry_integration():
     assert body["results"][0]["primaryAccession"] == "P31749"
 
 @pytest.mark.integration
+def test_get_invalid_uniprot_entry_integration():
+    result = get_uniprot_entry("Invalid")
+    assert result["status"] == "error"
+    message = result.get("message")
+    assert "Bad Request" in message
+
+@pytest.mark.integration
 def test_orthology_integration():
     """Integration test for orthology query"""
     result = orthology("P31749")  # AKT1 Human
     # Orthology may not return results for every gene
     assert "status" in result
-    assert result["status"] in ["ok", "error"]
-    if result["status"] == "ok":
-        body = result.get("body")
-        assert "results" in body
+    assert result["status"] == "ok"
+    body = result.get("body")
+    assert "results" in body
+    assert len(body["results"]) > 0
+    first_result = body["results"][0]
+    assert "extraAttributes" in first_result
+
+@pytest.mark.integration
+def test_invalid_orthology_integration():
+    result = orthology("Invalid")  # AKT1 Human
+    # Orthology may not return results for every gene
+    assert "status" in result
+    assert result["status"] == "error"
+    message = result.get("message")
+    assert "Unable to fetch entry for Invalid" in message
 
 @pytest.mark.integration
 def test_paralogy_integration():
@@ -53,10 +87,21 @@ def test_paralogy_integration():
     result = paralogy("P31749")  # AKT1 Human
     # Paralogy may not return results for every gene
     assert "status" in result
-    assert result["status"] in ["ok", "error"]
-    if result["status"] == "ok":
-        body = result.get("body")
-        assert "results" in body
+    assert result["status"] == "ok"
+    body = result.get("body")
+    assert "results" in body
+    assert len(body["results"]) > 0
+    first_result = body["results"][0]
+    assert "genes" in first_result
+
+@pytest.mark.integration
+def test_invalid_paralogy_integration():
+    result = paralogy("Invalid")  # AKT1 Human
+    # Paralogy may not return results for every gene
+    assert "status" in result
+    assert result["status"] is "error"
+    message = result.get("message")
+    assert "Unable to fetch entry for Invalid" in message
 
 @pytest.mark.integration
 def test_enzyme_dat_resource():
