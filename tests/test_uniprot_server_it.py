@@ -1,5 +1,5 @@
 import pytest
-from src.uniprot.tools.server import (
+from uniprot.tools.server import (
     search_uniprot,
     orthology,
     paralogy,
@@ -24,7 +24,7 @@ def test_search_uniprot_integration():
     assert "results" in body
     assert len(body["results"]) > 0
     first_result = body["results"][0]
-    assert "accession" in first_result
+    assert "comments" in first_result
 
 @pytest.mark.integration
 def test_get_uniprot_entry_integration():
