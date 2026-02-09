@@ -20,6 +20,7 @@ RUN uv sync --frozen --no-dev
 
 # Copy app source
 COPY . .
+COPY src ./src
 
 # Remove any copied .venv and recreate clean environment
 RUN rm -rf .venv && uv sync --frozen --no-dev
