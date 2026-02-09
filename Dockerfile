@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml uv.lock* ./
 
 # Install dependencies with uv
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --system
 
 # Copy app source
 COPY . .
