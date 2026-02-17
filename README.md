@@ -2,6 +2,8 @@
 
 A Python-based server that provides tools to interact with the UniProt database using the Model Context Protocol (MCP) architecture.
 
+> **⚠️ DISCLAIMER: This project is currently experimental and under active development. Features, APIs, and documentation may change without notice ⚠️**
+
 ## Overview
 
 This repository contains code to build a UniProt MCP (Model Context Protocol) server that allows users to:
