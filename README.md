@@ -108,7 +108,7 @@ You can also run the server using Docker:
 
 ```bash
 docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-docker run -p 8000:8000 registry.gitlab.com/[your-group]/uniprot-mcp-server:latest
+docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
 ```
 
 Replace `[your-group]` with your GitLab group path.
