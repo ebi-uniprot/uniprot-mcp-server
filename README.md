@@ -6,21 +6,12 @@ A Python-based server that provides tools to interact with the UniProt database 
 
 ## Overview
 
-This repository contains code to build a UniProt MCP (Model Context Protocol) server that allows users to:
+This repository contains code to build a UniProt MCP server that allows users to:
 - Search the UniProt database with various filtering criteria
 - Find orthology information for UniProtKB entries
 - Access enzyme data and descriptions
 
-The server leverages the UniProt REST API and Alliance Genome API to provide comprehensive protein information in a structured format.
-
-## Tech Stack
-
-- **Python**: Core programming language
-- **uv**: Package manager
-- **FastMCP**: Framework for building Model Context Protocol servers
-- **Pydantic**: Data validation and settings management
-- **Requests**: HTTP library for API interactions
-- **CSV**: Module for handling tabular data
+The server leverages the UniProt REST APIs and Alliance Genome API to provide comprehensive protein information in a structured format.
 
 ## Features
 
@@ -40,17 +31,55 @@ Find orthologous proteins across different species:
 - Retrieve orthology information via Alliance Genome API
 - Get corresponding UniProt entries for orthologous genes
 
-### 3. Enzyme Data Access
+### 3. Fetch UniProt Entry by Accession(s)
+
+Retrieve a UniProt entry using its accession:
+- Input one or more UniProtKB accession(s).
+- Get the corresponding UniProtKB entry details.
+
+### 4. EC Number Replacement Prompt
+
+This prompt allows you to search UniProt and replace EC numbers with descriptions from the enzyme data:
+- Input: Provide the search fields for UniProt.
+- Process: EC numbers are replaced with corresponding descriptions from the enzyme data file.
+- Output:
+  - If an EC number is found, it will be replaced with its description.
+  - If an EC number is not found, the message **"Information not available"** will be displayed.
+  - Results are presented in a table format:  
+    `Protein Accession: accession -----> EC: ec description`
+
+### 5. Enzyme Data Access
 
 Access enzyme data from a local database:
 - Map EC numbers to enzyme descriptions
 - Integrate enzyme information with protein search results
 
-## Installation
+## Usage
 
+### Using Docker
+
+You can run the server using the official Docker image:
+
+```bash
+docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+```
+
+## Tech Stack
+
+- **Python**: Core programming language
+- **uv**: Package manager
+- **FastMCP**: Framework for building Model Context Protocol servers
+- **Pydantic**: Data validation and settings management
+- **Requests**: HTTP library for API interactions
+- **CSV**: Module for handling tabular data
+
+## Local Development
+
+### Set up
 1. Clone the repository:
    ```bash
-   git clone https://gitlab.ebi.ac.uk/uniprot/aa/llm/uniprot-mcp-server.git
+   git clone https://github.com/ebi-uniprot/uniprot-mcp-server.git
    cd uniprot-mcp-server
    ```
 
@@ -84,8 +113,6 @@ Access enzyme data from a local database:
 
 5. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
 
-## Usage
-
 ### Starting the Server
 
 Run the server using:
@@ -94,56 +121,13 @@ Run the server using:
 uv run -m src.uniprot.tools.server
 ```
 
-### Starting the MCP Inspector
+### Starting the MCP Inspector for debugging
 
 Run the MCP Inspector using:
 
 ```bash
 npx @modelcontextprotocol/inspector
 ```
-
-### Using Docker
-
-You can also run the server using Docker:
-
-```bash
-docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-```
-
-Replace `[your-group]` with your GitLab group path.
-
-## CI/CD Pipeline
-
-This repository includes a GitLab CI/CD pipeline that automatically builds, pushes Docker images, and can trigger Kubernetes deployments.
-
-### Pipeline Behavior
-
-The pipeline consists of two stages: `build` and `deploy`.
-
-#### Build Stage (`docker-build`)
-
-- Builds a Docker image and pushes it to the GitLab registry.
-- Runs automatically on the `main` branch or can be triggered manually on any branch.
-- Creates two Docker image tags:
-    - `latest` – always points to the most recent successful build
-    - `[commit-sha]` – unique tag based on the commit SHA for versioning and rollback
-
-#### Deploy Stage (`k8s-deploy`)
-
-- Triggers a Kubernetes deployment(uniprot/deployment/unp.ci.api.k8s) in the `dev` environment using the `latest` Docker image.
-- Runs automatically after a successful build on the `main` branch or can be triggered manually on any branch.
-- Uses variables like `CI_PIPELINE_TASKS`, `MCP_TAG`, `DC`, `K8S_ENV`, and `ARTIFACT` for deployment configuration.
-
-### Manually Triggering a Build
-
-To manually trigger a build:
-
-1. Go to your GitLab repository
-2. Navigate to CI/CD > Pipelines
-3. Click "Run pipeline"
-4. Select the branch you want to build
-5. Click "Run pipeline"
 
 ## Architecture
 
@@ -158,6 +142,7 @@ The project follows the Model Context Protocol (MCP) architecture.
 
 - **Vishal Joshi**
 - **Shadab Ahmad**
+- **Supun Wijerathne**
 ## Created
 - June 2025
 
