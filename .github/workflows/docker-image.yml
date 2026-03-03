@@ -20,7 +20,7 @@ jobs:
         version: latest  # Optional: you can specify a version if needed
 
     - name: Cache Docker layers
-      uses: actions/cache@v2
+      uses: actions/cache@v3  # Updated to v3
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
