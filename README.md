@@ -60,10 +60,31 @@ Access enzyme data from a local database:
 
 You can run the server using the official Docker image:
 
-```bash
-docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-```
+1. **Pull the latest Docker image from GitHub Container Registry:**
+   ```bash
+   docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest 
+   ```
+
+2. **Run the Docker container and expose port 8000 on the host machine:**
+    ```bash
+   docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+   ```
+
+3. **Configure LLM Client (Example: Claude Desktop)**
+
+> **Warning**: This step will **not work with the free-tier Claude**.
+
+   - Open **Claude Desktop** and go to the settings then Connectors
+   - Click on Add custom connector
+   - Enter name e.g. uniprot-mcp-server
+   - Remote MCP server URL : `http://localhost:8000`
+
+4. **Test the Connection**:
+   - In your LLM client, test the connection to ensure that it can communicate with the MCP server at `http://localhost:8000`.
+   - Once connected, you can start querying and interacting with the server using your LLM client.
+
+   > **Note**: This example uses **Claude Desktop**, but you can configure any LLM client to interact with the server in the same way.
+
 
 ## Tech Stack
 
