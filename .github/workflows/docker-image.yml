@@ -1,4 +1,4 @@
-name: Docker Image CI for UniProt MCP Server 
+name: Docker Image CI for UniProt MCP Server
 
 on:
   push:
@@ -7,15 +7,30 @@ on:
     branches: [ "readme_live" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      with:
+        version: latest  # Optional: you can specify a version if needed
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Login to GitHub Container Registry
+      run: |
+        echo ${{ secrets.GH_PAT }} | docker login ghcr.io --username ebi-uniprot --password-stdin
+
     - name: Build and push the Docker image
       run: |
-        docker login --username ebi-uniprot --password ${{ secrets.GH_PAT }} ghcr.io
-        docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/ebi-uniprot/uniprot-mcp-server:latest .
-        docker push ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+        docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/ebi-uniprot/uniprot-mcp-server:latest --push .
