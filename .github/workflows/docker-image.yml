@@ -17,5 +17,5 @@ jobs:
     - name: Build and push the Docker image
       run: |
         docker login --username ebi-uniprot --password ${{ secrets.GH_PAT }} ghcr.io
-        docker build . --file Dockerfile --tag ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+        docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/ebi-uniprot/uniprot-mcp-server:latest .
         docker push ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
