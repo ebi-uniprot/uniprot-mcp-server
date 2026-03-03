@@ -1,3 +1,5 @@
+<span style="font-size: 20px; font-weight: bold;">**Disclaimer**: The MCP server is still in development and should not be used at this time.</span>
+
 # UniProt MCP Server
 
 A Python-based server that provides tools to interact with the UniProt database using the Model Context Protocol (MCP) architecture.
