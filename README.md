@@ -4,6 +4,17 @@ A Python-based server that provides tools to interact with the UniProt database 
 
 > **⚠️ DISCLAIMER: This project remains in a development and experimental phase. All features, APIs, and documentation may evolve and change without advance warning. ⚠️**
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Running MCP Server Using Docker](#running-mcp-server-using-docker)
+- [Tech Stack](#tech-stack)
+- [Local Development](#local-development-and-running-without-docker)
+- [Architecture](#architecture)
+- [External APIs](#external-apis)
+- [Authors](#authors)
+- [License](#license)
+
 ## Overview
 
 This repository contains code to build a UniProt MCP server that allows users to:
@@ -54,9 +65,7 @@ Access enzyme data from a local database:
 - Map EC numbers to enzyme descriptions
 - Integrate enzyme information with protein search results
 
-## Usage
-
-### Using Docker
+## Running MCP Server Using Docker
 
 You can run the server using the official Docker image:
 
@@ -95,7 +104,7 @@ You can run the server using the official Docker image:
 - **Requests**: HTTP library for API interactions
 - **CSV**: Module for handling tabular data
 
-## Local Development
+## Local Development and Running (Without Docker)
 
 ### Set up
 1. Clone the repository:
@@ -164,8 +173,7 @@ The project follows the Model Context Protocol (MCP) architecture.
 - **Vishal Joshi**
 - **Shadab Ahmad**
 - **Supun Wijerathne**
-## Created
-- June 2025
+
 
 ## License
 
