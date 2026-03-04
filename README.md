@@ -28,15 +28,18 @@ An MCP server implementation for retrieving comprehensive protein information fr
 Search the UniProt database with customisable filters like function, organism, gene name, and review status.
 
 ### 2. **Orthology Queries**
-Find orthologous proteins across species by providing a UniProtKB accession.
+Find orthologs proteins across species by providing a UniProtKB accession.
 
-### 3. **Fetch UniProt Entry by Accession(s)**
+### 3. **Paralogy Queries**
+Find paralogs proteins across species by providing a UniProtKB accession.
+
+### 4. **Fetch UniProt Entry by Accession(s)**
 Retrieve detailed UniProt entries using one or more UniProtKB accessions.
 
-### 4. **EC Number Replacement Prompt**
+### 5. **EC Number Replacement Prompt**
 Replace EC numbers in protein search results with descriptions from an enzyme data file.
 
-### 5. **Enzyme Data Access**
+### 6. **Enzyme Data Access**
 Access enzyme data from a local database, mapping EC numbers to enzyme descriptions and integrating them with protein search results.
 
 ---
@@ -196,6 +199,7 @@ npx @modelcontextprotocol/inspector
 ## Architecture
 
 The project follows the Model Context Protocol (MCP) architecture.
+
 ---
 
 ## External APIs
