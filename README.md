@@ -7,6 +7,7 @@ A Python-based server that provides tools to interact with the UniProt database 
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
+- [Tools](#tools)
 - [Running MCP Server Using Docker](#running-mcp-server-using-docker)
 - [Tech Stack](#tech-stack)
 - [Local Development](#local-development-and-running-without-docker)
@@ -24,46 +25,66 @@ This repository contains code to build a UniProt MCP server that allows users to
 
 The server leverages the UniProt REST APIs and Alliance Genome API to provide comprehensive protein information in a structured format.
 
+
 ## Features
 
-### 1. UniProt Search
+### 1. **UniProt Search**
+Search the UniProt database with customizable filters like function, organism, gene name, and review status.
 
-Search the UniProt database with various filtering options:
-- Function query
-- Organism/taxonomy ID
-- Gene name (exact or partial matching)
-- Review status (SwissProt/TrEMBL)
-- Customizable result size
+### 2. **Orthology Queries**
+Find orthologous proteins across species by providing a UniProtKB accession.
 
-### 2. Orthology Queries
+### 3. **Fetch UniProt Entry by Accession(s)**
+Retrieve detailed UniProt entries using one or more UniProtKB accessions.
 
-Find orthologous proteins across different species:
-- Input a UniProtKB accession
-- Retrieve orthology information via Alliance Genome API
-- Get corresponding UniProt entries for orthologous genes
+### 4. **EC Number Replacement Prompt**
+Replace EC numbers in protein search results with descriptions from an enzyme data file.
 
-### 3. Fetch UniProt Entry by Accession(s)
+### 5. **Enzyme Data Access**
+Access enzyme data from a local database, mapping EC numbers to enzyme descriptions and integrating them with protein search results.
 
-Retrieve a UniProt entry using its accession:
-- Input one or more UniProtKB accession(s).
-- Get the corresponding UniProtKB entry details.
+---
 
-### 4. EC Number Replacement Prompt
+## Tools
 
-This prompt allows you to search UniProt and replace EC numbers with descriptions from the enzyme data:
-- Input: Provide the search fields for UniProt.
-- Process: EC numbers are replaced with corresponding descriptions from the enzyme data file.
-- Output:
-  - If an EC number is found, it will be replaced with its description.
-  - If an EC number is not found, the message **"Information not available"** will be displayed.
-  - Results are presented in a table format:  
-    `Protein Accession: accession -----> EC: ec description`
+### `search_uniprot`
+- **Description**: Search the UniProt database with optional filters (e.g., function, organism, gene name, etc.).
+- **Parameters**:
+  - `function_query`: Concise protein function (e.g., "kinase").
+  - `organism_id`: Taxonomy ID (e.g., 9606 for human).
+  - `size`: Number of results to return.
+  - `gene_name`: Gene name for query (partial or exact match).
+  - `gene_exact`: Exact match for gene name.
+  - `reviewed`: Filter by review status (True/False/None).
 
-### 5. Enzyme Data Access
+---
 
-Access enzyme data from a local database:
-- Map EC numbers to enzyme descriptions
-- Integrate enzyme information with protein search results
+### `orthology_query`
+- **Description**: Retrieve orthologs for a given UniProtKB accession across different species using the Alliance Genome API.
+- **Parameters**:
+  - `accession`: UniProtKB accession for the protein.
+
+---
+
+### `fetch_uniprot_entry_by_accession`
+- **Description**: Retrieve UniProt entries using one or more UniProtKB accessions.
+- **Parameters**:
+  - `accession`: One or more UniProtKB accessions (comma-separated).
+
+---
+
+### `summary`
+- **Description**: Replace EC numbers with descriptions from an enzyme data file, displaying the results in a table format.
+- **Input**: UniProt search fields and EC numbers.
+- **Output**: Protein accession with EC number and corresponding description in a table.
+
+---
+
+### `enzyme_dat`
+- **Description**: Provides enzyme descriptions from a local enzyme data file (e.g., `enzyme.dat`).
+- **Output**: EC number mapped to enzyme description.
+
+---
 
 ## Running MCP Server Using Docker
 
@@ -78,6 +99,7 @@ You can run the server using the official Docker image:
     ```bash
    docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
    ```
+---
 
 3. **Configure LLM Client (Example: Claude Desktop)**
 
@@ -94,6 +116,7 @@ You can run the server using the official Docker image:
 
    > **Note**: This example uses **Claude Desktop**, but you can configure any LLM client to interact with the server in the same way.
 
+---
 
 ## Tech Stack
 
@@ -103,6 +126,7 @@ You can run the server using the official Docker image:
 - **Pydantic**: Data validation and settings management
 - **Requests**: HTTP library for API interactions
 - **CSV**: Module for handling tabular data
+---
 
 ## Local Development and Running (Without Docker)
 
@@ -158,15 +182,19 @@ Run the MCP Inspector using:
 ```bash
 npx @modelcontextprotocol/inspector
 ```
+---
 
 ## Architecture
 
 The project follows the Model Context Protocol (MCP) architecture.
+---
 
 ## External APIs
 
 - [UniProt REST API](https://rest.uniprot.org)
 - [Alliance Genome API](https://www.alliancegenome.org/api)
+
+---
 
 ## Authors
 
@@ -174,7 +202,9 @@ The project follows the Model Context Protocol (MCP) architecture.
 - **Shadab Ahmad**
 - **Supun Wijerathne**
 
-
+---
 ## License
 
 This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](https://github.com/ebi-uniprot/uniprot-mcp-server/blob/main/LICENSE) file for details.
+
+---
