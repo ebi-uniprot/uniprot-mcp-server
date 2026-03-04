@@ -8,6 +8,8 @@ A Python-based server that provides tools to interact with the UniProt database 
 - [Overview](#overview)
 - [Features](#features)
 - [Tools](#tools)
+- [Prompts](#prompts)
+- [Resources](#resources)
 - [Running MCP Server Using Docker](#running-mcp-server-using-docker)
 - [Tech Stack](#tech-stack)
 - [Local Development](#local-development-and-running-without-docker)
@@ -67,16 +69,29 @@ Access enzyme data from a local database, mapping EC numbers to enzyme descripti
 
 ---
 
+### `paralogy_query`
+- **Description**: Find paralogous proteins for a given UniProtKB accession across different species using the Alliance Genome API.
+- **Parameters**:
+  - `accession`: UniProtKB accession for the protein.
+
+---
+## Prompts
+
 ### `summary`
-- **Description**: Replace EC numbers with descriptions from an enzyme data file, displaying the results in a table format.
-- **Input**: UniProt search fields and EC numbers.
-- **Output**: Protein accession with EC number and corresponding description in a table.
+- **Description**: This prompt searches UniProt with the provided fields and replaces EC numbers with corresponding descriptions from a local enzyme data file. If an EC number is not found, the response will include "Information not available."
+- **Output**: Displays the results in a table format, such as:
+Protein Accession: accession -----> EC: ec description
 
 ---
 
+## Resources
+
 ### `enzyme_dat`
-- **Description**: Provides enzyme descriptions from a local enzyme data file (e.g., `enzyme.dat`).
-- **Output**: EC number mapped to enzyme description.
+- **Description**: Provides access to the **enzyme.dat** file, which maps EC numbers to enzyme descriptions. This resource is used to replace EC numbers with their corresponding descriptions in protein search results.
+- **URI**: `resource://enzymedat`
+- **MIME Type**: `application/json`
+- **Output**: A JSON object mapping EC numbers to enzyme descriptions.
+- **Usage**: This resource loads the **enzyme.dat** file, reads its content, and returns a mapping of EC numbers (as keys) to enzyme descriptions (as values).
 
 ---
 
