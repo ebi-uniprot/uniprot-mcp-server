@@ -18,18 +18,12 @@ A Python-based server that provides tools to interact with the UniProt database 
 
 ## Overview
 
-This repository contains code to build a UniProt MCP server that allows users to:
-- Search the UniProt database with various filtering criteria
-- Find orthology information for UniProtKB entries
-- Access enzyme data and descriptions
-
-The server leverages the UniProt REST APIs and Alliance Genome API to provide comprehensive protein information in a structured format.
-
+An MCP server implementation for retrieving comprehensive protein information from the **UniProt**.
 
 ## Features
 
 ### 1. **UniProt Search**
-Search the UniProt database with customizable filters like function, organism, gene name, and review status.
+Search the UniProt database with customisable filters like function, organism, gene name, and review status.
 
 ### 2. **Orthology Queries**
 Find orthologous proteins across species by providing a UniProtKB accession.
