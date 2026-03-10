@@ -2,9 +2,9 @@ name: Docker Image CI for UniProt MCP Server
 
 on:
   push:
-    branches: [ "readme_live" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "readme_live" ]
+    branches: [ "main" ]
 
 jobs:
   build:
