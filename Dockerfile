@@ -24,6 +24,9 @@ COPY . .
 # Remove any copied .venv and recreate clean environment
 RUN rm -rf .venv && uv sync --frozen --no-dev
 
+# Change ownership of the /app directory so appuser can write to it
+RUN useradd -m appuser && chown -R appuser:appuser /app
+
 # Set environment variables (default values can be overridden by Kubernetes)
 ENV APP_HOST=0.0.0.0
 ENV APP_PORT=8000
@@ -32,7 +35,6 @@ ENV APP_PORT=8000
 EXPOSE 8000
 
 # Drop root privileges
-RUN useradd -m appuser
 USER appuser
 
 # Run your server using uv

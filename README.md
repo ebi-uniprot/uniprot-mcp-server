@@ -6,14 +6,127 @@ A Python-based server that provides tools to interact with the UniProt database 
 
 > **⚠️ DISCLAIMER: This project remains in a development and experimental phase. All features, APIs, and documentation may evolve and change without advance warning. ⚠️**
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tools](#tools)
+- [Prompts](#prompts)
+- [Resources](#resources)
+- [Running MCP Server Using Docker](#running-mcp-server-using-docker)
+- [Tech Stack](#tech-stack)
+- [Local Development](#local-development-and-running-without-docker)
+- [Architecture](#architecture)
+- [External APIs](#external-apis)
+- [Authors](#authors)
+- [License](#license)
+
 ## Overview
 
-This repository contains code to build a UniProt MCP (Model Context Protocol) server that allows users to:
-- Search the UniProt database with various filtering criteria
-- Find orthology information for UniProtKB entries
-- Access enzyme data and descriptions
+An MCP server implementation for retrieving comprehensive protein information from the **UniProt**.
 
-The server leverages the UniProt REST API and Alliance Genome API to provide comprehensive protein information in a structured format.
+## Features
+
+### 1. **UniProt Search**
+Search the UniProt database with customisable filters like function, organism, gene name, and review status.
+
+### 2. **Orthology Queries**
+Find orthologs proteins across species by providing a UniProtKB accession.
+
+### 3. **Paralogy Queries**
+Find paralogs proteins across species by providing a UniProtKB accession.
+
+### 4. **Fetch UniProt Entry by Accession(s)**
+Retrieve detailed UniProt entries using one or more UniProtKB accessions.
+
+### 5. **EC Number Replacement Prompt**
+Replace EC numbers in protein search results with descriptions from an enzyme data file.
+
+### 6. **Enzyme Data Access**
+Access enzyme data from a local database, mapping EC numbers to enzyme descriptions and integrating them with protein search results.
+
+---
+
+## Tools
+
+### `search_uniprot`
+- **Description**: Search the UniProt database with optional filters (e.g., function, organism, gene name, etc.).
+- **Parameters**:
+  - `function_query`: Concise protein function (e.g., "kinase").
+  - `organism_id`: Taxonomy ID (e.g., 9606 for human).
+  - `size`: Number of results to return.
+  - `gene_name`: Gene name for query (partial or exact match).
+  - `gene_exact`: Exact match for gene name.
+  - `reviewed`: Filter by review status (True/False/None).
+
+---
+
+### `orthology_query`
+- **Description**: Retrieve orthologs for a given UniProtKB accession across different species using the Alliance Genome API.
+- **Parameters**:
+  - `accession`: UniProtKB accession for the protein.
+
+---
+
+### `fetch_uniprot_entry_by_accession`
+- **Description**: Retrieve UniProt entries using one or more UniProtKB accessions.
+- **Parameters**:
+  - `accession`: One or more UniProtKB accessions (comma-separated).
+
+---
+
+### `paralogy_query`
+- **Description**: Find paralogous proteins for a given UniProtKB accession across different species using the Alliance Genome API.
+- **Parameters**:
+  - `accession`: UniProtKB accession for the protein.
+
+---
+## Prompts
+
+### `summary`
+- **Description**: This prompt searches UniProt with the provided fields and replaces EC numbers with corresponding descriptions from a local enzyme data file. If an EC number is not found, the response will include "Information not available."
+- **Output**: Displays the results in a table format, such as:
+Protein Accession: accession -----> EC: ec description
+
+---
+
+## Resources
+
+### `enzyme_dat`
+- **Description**: Provides access to the **enzyme.dat** file, which maps EC numbers to enzyme descriptions. This resource is used to replace EC numbers with their corresponding descriptions in protein search results.
+- **URI**: `resource://enzymedat`
+- **MIME Type**: `application/json`
+- **Output**: A JSON object mapping EC numbers to enzyme descriptions.
+- **Usage**: This resource loads the **enzyme.dat** file, reads its content, and returns a mapping of EC numbers (as keys) to enzyme descriptions (as values).
+
+---
+
+## Running MCP Server Using Docker
+
+You can run the server using the official Docker image:
+
+1. **Pull the latest Docker image from GitHub Container Registry:**
+   ```bash
+   docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest 
+   ```
+
+2. **Run the Docker container and expose port 8000 on the host machine:**
+    ```bash
+   docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
+   ```
+---
+
+3. **Connect Your LLM Client:**
+
+- Point your LLM client to the MCP server URL:  http://<server-address>:8000/mcp
+
+Use `localhost` if on the same machine, or the server’s network IP otherwise.  
+
+4. **Test the Connection**
+
+- Verify the client can reach the server.  
+- Once successful, you can start sending queries.
+
+---
 
 ## Tech Stack
 
@@ -23,36 +136,14 @@ The server leverages the UniProt REST API and Alliance Genome API to provide com
 - **Pydantic**: Data validation and settings management
 - **Requests**: HTTP library for API interactions
 - **CSV**: Module for handling tabular data
+---
 
-## Features
+## Local Development and Running (Without Docker)
 
-### 1. UniProt Search
-
-Search the UniProt database with various filtering options:
-- Function query
-- Organism/taxonomy ID
-- Gene name (exact or partial matching)
-- Review status (SwissProt/TrEMBL)
-- Customizable result size
-
-### 2. Orthology Queries
-
-Find orthologous proteins across different species:
-- Input a UniProtKB accession
-- Retrieve orthology information via Alliance Genome API
-- Get corresponding UniProt entries for orthologous genes
-
-### 3. Enzyme Data Access
-
-Access enzyme data from a local database:
-- Map EC numbers to enzyme descriptions
-- Integrate enzyme information with protein search results
-
-## Installation
-
+### Set up
 1. Clone the repository:
    ```bash
-   git clone https://gitlab.ebi.ac.uk/uniprot/aa/llm/uniprot-mcp-server.git
+   git clone https://github.com/ebi-uniprot/uniprot-mcp-server.git
    cd uniprot-mcp-server
    ```
 
@@ -86,8 +177,6 @@ Access enzyme data from a local database:
 
 5. Configure the enzyme data file path in `src/uniprot/tools/server.py` if needed.
 
-## Usage
-
 ### Starting the Server
 
 Run the server using:
@@ -96,73 +185,37 @@ Run the server using:
 uv run -m src.uniprot.tools.server
 ```
 
-### Starting the MCP Inspector
+### Starting the MCP Inspector for debugging
 
 Run the MCP Inspector using:
 
 ```bash
 npx @modelcontextprotocol/inspector
 ```
-
-### Using Docker
-
-You can also run the server using Docker:
-
-```bash
-docker pull ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-docker run -p 8000:8000 ghcr.io/ebi-uniprot/uniprot-mcp-server:latest
-```
-
-Replace `[your-group]` with your GitLab group path.
-
-## CI/CD Pipeline
-
-This repository includes a GitLab CI/CD pipeline that automatically builds, pushes Docker images, and can trigger Kubernetes deployments.
-
-### Pipeline Behavior
-
-The pipeline consists of two stages: `build` and `deploy`.
-
-#### Build Stage (`docker-build`)
-
-- Builds a Docker image and pushes it to the GitLab registry.
-- Runs automatically on the `main` branch or can be triggered manually on any branch.
-- Creates two Docker image tags:
-    - `latest` – always points to the most recent successful build
-    - `[commit-sha]` – unique tag based on the commit SHA for versioning and rollback
-
-#### Deploy Stage (`k8s-deploy`)
-
-- Triggers a Kubernetes deployment(uniprot/deployment/unp.ci.api.k8s) in the `dev` environment using the `latest` Docker image.
-- Runs automatically after a successful build on the `main` branch or can be triggered manually on any branch.
-- Uses variables like `CI_PIPELINE_TASKS`, `MCP_TAG`, `DC`, `K8S_ENV`, and `ARTIFACT` for deployment configuration.
-
-### Manually Triggering a Build
-
-To manually trigger a build:
-
-1. Go to your GitLab repository
-2. Navigate to CI/CD > Pipelines
-3. Click "Run pipeline"
-4. Select the branch you want to build
-5. Click "Run pipeline"
+---
 
 ## Architecture
 
 The project follows the Model Context Protocol (MCP) architecture.
+
+---
 
 ## External APIs
 
 - [UniProt REST API](https://rest.uniprot.org)
 - [Alliance Genome API](https://www.alliancegenome.org/api)
 
+---
+
 ## Authors
 
 - **Vishal Joshi**
 - **Shadab Ahmad**
-## Created
-- June 2025
+- **Supun Wijerathne**
 
+---
 ## License
 
 This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](https://github.com/ebi-uniprot/uniprot-mcp-server/blob/main/LICENSE) file for details.
+
+---
