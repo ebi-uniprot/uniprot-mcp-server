@@ -117,7 +117,7 @@ You can run the server using the official Docker image:
 
 3. **Connect Your LLM Client:**
 
-- Point your LLM client to the MCP server URL:  http://<server-address>:8000/mcp
+- Point your LLM client to the MCP server URL:  `http://<server-address>:8000/mcp`
 
 Use `localhost` if on the same machine, or the server’s network IP otherwise.  
 
